@@ -1,0 +1,14 @@
+conkhach1_sit.png
+size:555,272
+filter:Linear,Linear
+pma:true
+Body
+bounds:237,2,173,268
+offsets:88,92,335,449
+Head
+bounds:2,19,251,233
+offsets:100,100,451,433
+rotate:90
+Leg
+bounds:412,90,141,180
+offsets:100,100,341,380

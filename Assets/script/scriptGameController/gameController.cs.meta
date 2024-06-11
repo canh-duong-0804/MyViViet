@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 1bc094ab1d9ab4b4987d622317d21d97
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - customer: {fileID: 6132859625092140726, guid: 35cfacf012fbb7740a76a3a4492e9031, type: 3}
+  - checkWaiter: {fileID: 541628726981311073, guid: 8d104a883ef09144486c09acc1278914, type: 3}
+  - targetObjectCustomer1: {fileID: 4366635543003388143, guid: 12dd19f3eb5a38748a219b72b56168dc, type: 3}
+  - targetObjectCustomer2: {fileID: 2469778407232147886, guid: 4ce98b18995dfe84ca49ad6a014bdced, type: 3}
+  - targetObjectCustomer3: {fileID: 4921254842845352473, guid: ea9aa2c8592fa0e41ac188beafdaa3b3, type: 3}
+  - targetObjectCustomer4: {fileID: 4770096124737837210, guid: 91af7b5fd79bef1479fb440a307f0a7c, type: 3}
+  - recieveOrderSlot: {fileID: 6684480432491313437, guid: 4d82610f9a410d84789ffa8239200edc, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
