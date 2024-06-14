@@ -26,7 +26,7 @@ public class gameController : MonoBehaviour
     [SerializeField] GameObject enablePopupSlot2;
     [SerializeField] GameObject enablePopupSlot3;
     [SerializeField] GameObject enablePopupKitchen;
-
+    [SerializeField] GameObject tutorialPopup;
 
     [SerializeField] private Transform recieveOrderSlot1;
     [SerializeField] private Transform recieveOrderSlot2;
@@ -47,6 +47,11 @@ public class gameController : MonoBehaviour
 
 
     [SerializeField] private GameObject upgradeScreen;
+
+    [SerializeField] private GameObject darkOverlay;
+    [SerializeField] private Image highlight;
+    private Button currentButton;
+    private bool startGame = true;
 
     public float coinsRestaurant { get; set; }
     private const string GameDataKey = "GameData11";
@@ -107,8 +112,23 @@ public class gameController : MonoBehaviour
     {
         instance = this;
         LoadGameData();
+        if (!PlayerPrefs.HasKey(GameDataKey))
+        {
+            tutorialPopup.active = true;
+            startGame = false;
+        }
+
 
     }
+
+    public void CloseTutorialPopupClicked()
+    {
+        tutorialPopup.active = false;
+        startGame = true;
+    }
+
+
+
     void OnApplicationPause(bool pauseStatus)
     {
         if (pauseStatus)
@@ -146,86 +166,90 @@ public class gameController : MonoBehaviour
         }
         else
         {
-            coinsRestaurant = 200f; // Default value if no data is found
+            coinsRestaurant = 0; // Default value if no data is found
             //dishesList = new List<Dishes>(); // Default value if no data is found
         }
     }
 
     private void Update()
     {
-        Waiter newWaiter = checkWaiter.GetComponent<Waiter>();
-        textCoins.text = " " + coinsRestaurant;
-
-        if (statusSlotFreeOfSlot1 || statusSlotFreeOfSlot2 || statusSlotFreeOfSlot3)
+        if (startGame)
         {
+            Waiter newWaiter = checkWaiter.GetComponent<Waiter>();
+            textCoins.text = " " + coinsRestaurant;
 
-            GameObject newCustomerObject = Instantiate(customer, spawnPoint.position, Quaternion.identity);
-            newCustomerObject.name = "cus " + count++;
-
-            Customer customerObject = newCustomerObject.GetComponent<Customer>();
-            CustomerManager customerManager = newCustomerObject.GetComponent<CustomerManager>();
-            customerList.Enqueue(customerObject);
-            Listcus1.Enqueue(customerObject);
-
-
-            Customer cus = Listcus1.Dequeue();
-            if (!statusslotLoop)
+            if (statusSlotFreeOfSlot1 || statusSlotFreeOfSlot2 || statusSlotFreeOfSlot3)
             {
-                
-                if (statusSlotFreeOfSlot3)
+
+                GameObject newCustomerObject = Instantiate(customer, spawnPoint.position, Quaternion.identity);
+                newCustomerObject.name = "cus " + count++;
+
+                Customer customerObject = newCustomerObject.GetComponent<Customer>();
+                CustomerManager customerManager = newCustomerObject.GetComponent<CustomerManager>();
+                customerList.Enqueue(customerObject);
+                Listcus1.Enqueue(customerObject);
+
+
+                Customer cus = Listcus1.Dequeue();
+                if (!statusslotLoop)
                 {
-                    cus.SetFreeSpot(targetObjectCustomer3.transform);
-                    StartCoroutine(SetCustomerManagerStatus(customerManager));
-                    StartCoroutine(CountDownAndSetFreeSpot2(newWaiter));
-                    statusSlotFreeOfSlot3 = false;
+
+                    if (statusSlotFreeOfSlot3)
+                    {
+                        cus.SetFreeSpot(targetObjectCustomer3.transform);
+                        StartCoroutine(SetCustomerManagerStatus(customerManager));
+                        StartCoroutine(CountDownAndSetFreeSpot2(newWaiter));
+                        statusSlotFreeOfSlot3 = false;
+                    }
+                    else if (statusSlotFreeOfSlot1)
+                    {
+                        cus.SetFreeSpot(targetObjectCustomer1.transform);
+                        StartCoroutine(SetCustomerManagerStatus(customerManager));
+                        statusSlotFreeOfSlot1 = false;
+                    }
+                    else if (statusSlotFreeOfSlot2)
+                    {
+                        cus.SetFreeSpot(targetObjectCustomer2.transform);
+                        StartCoroutine(SetCustomerManagerStatus(customerManager));
+                        statusSlotFreeOfSlot2 = false;
+                    }
                 }
-                else if (statusSlotFreeOfSlot1)
+                else
                 {
-                    cus.SetFreeSpot(targetObjectCustomer1.transform);
-                    StartCoroutine(SetCustomerManagerStatus(customerManager));
-                    statusSlotFreeOfSlot1 = false;
-                }
-                else if (statusSlotFreeOfSlot2)
-                {
-                    cus.SetFreeSpot(targetObjectCustomer2.transform);
-                    StartCoroutine(SetCustomerManagerStatus(customerManager));
-                    statusSlotFreeOfSlot2 = false;
-                }
-            }
-            else
-            {
-                if (statusSlotFreeOfSlot1)
-                {
+                    if (statusSlotFreeOfSlot1)
+                    {
 
-                    
-                    cus.SetFreeSpot(targetObjectCustomer1.transform);
-                    StartCoroutine(SetCustomerManagerStatus(customerManager));
-                    StartCoroutine(CountDownAndSetFreeSpotSlot1(cus, newWaiter));
-                   
-                    statusSlotFreeOfSlot1 = false;
-                }
 
-                else if (statusSlotFreeOfSlot2)
-                {
+                        cus.SetFreeSpot(targetObjectCustomer1.transform);
+                        StartCoroutine(SetCustomerManagerStatus(customerManager));
+                        StartCoroutine(CountDownAndSetFreeSpotSlot1(cus, newWaiter));
 
-                
-                    cus.SetFreeSpot(targetObjectCustomer2.transform);
-                    
-                    StartCoroutine(SetCustomerManagerStatus(customerManager));
-                    statusSlotFreeOfSlot2 = false;
+                        statusSlotFreeOfSlot1 = false;
+                    }
 
-                }
-                else if (statusSlotFreeOfSlot3)
-                {
+                    else if (statusSlotFreeOfSlot2)
+                    {
 
-                    
-                    cus.SetFreeSpot(targetObjectCustomer3.transform);
-                    StartCoroutine(SetCustomerManagerStatus(customerManager));
-                    statusSlotFreeOfSlot3 = false;
 
+                        cus.SetFreeSpot(targetObjectCustomer2.transform);
+
+                        StartCoroutine(SetCustomerManagerStatus(customerManager));
+                        statusSlotFreeOfSlot2 = false;
+
+                    }
+                    else if (statusSlotFreeOfSlot3)
+                    {
+
+
+                        cus.SetFreeSpot(targetObjectCustomer3.transform);
+                        StartCoroutine(SetCustomerManagerStatus(customerManager));
+                        statusSlotFreeOfSlot3 = false;
+
+                    }
                 }
             }
         }
+
 
 
     }
@@ -233,24 +257,25 @@ public class gameController : MonoBehaviour
 
     private IEnumerator SetCustomerManagerStatus(CustomerManager customerManager)
     {
-       
+
         yield return new WaitForSeconds(2f);
         customerManager.SetActiveSit(true);
         customerManager.SetActiveFront(false);
-       
-    } private IEnumerator SetCustomerManagerStatus1(CustomerManager customerManager)
+
+    }
+    private IEnumerator SetCustomerManagerStatus1(CustomerManager customerManager)
     {
-       
+
         yield return new WaitForSeconds(0f);
         customerManager.SetActiveFront(true);
         customerManager.SetActiveSit(false);
-       
+
     }
     IEnumerator CountDownAndSetFreeSpot2(Waiter newWaiter)
     {
         System.Random random = new System.Random();
         var unlockedDishes = DishesList.Where(d => d.isUnLock).ToList();
-       
+
 
         if (statusSlotReciveFreeOfSlot1 && !statusSlotFreeOfSlot1)
         {
@@ -273,7 +298,7 @@ public class gameController : MonoBehaviour
 
             yield return new WaitForSeconds(1f);
             waterSkel.AnimationName = "Front_Idle";
-           
+
 
             newWaiter.SetFreeSpot1(targetPositionKitchen.transform);
             yield return new WaitForSeconds(1f);
@@ -283,7 +308,7 @@ public class gameController : MonoBehaviour
 
             enablePopupKitchen.SetActive(false);
             newWaiter.SetFreeSpot1(recieveOrderSlot1.transform);
-            
+
             customerSitSkel.AnimationName = "sit_eat";
 
             enablePopupSlot1.SetActive(false);
@@ -295,7 +320,7 @@ public class gameController : MonoBehaviour
             StartCoroutine(SetCustomerManagerStatus1(customerManager));
 
             customer1.SetFreeSpot(customerExit.transform);
-         
+
 
             waterSkel.AnimationName = "Front_Walk";
             coinsRestaurant = dishesList[randomFood].price + coinsRestaurant;
@@ -337,13 +362,13 @@ public class gameController : MonoBehaviour
 
             waterSkel.AnimationName = "Front_Serve";
             yield return new WaitForSeconds(1.7f);
-            
+
             statusSlotReciveFreeOfSlot3 = true;
             statusSlotFreeOfSlot2 = true;
             StartCoroutine(SetCustomerManagerStatus1(customerManager));
             customer2.SetFreeSpot(customerExit.transform);
-           
-           
+
+
             coinsRestaurant = dishesList[randomFood].price + coinsRestaurant;
             textCoins.text = " " + coinsRestaurant;
 
@@ -358,7 +383,7 @@ public class gameController : MonoBehaviour
             Customer customer2 = customerList.Dequeue();
             CustomerManager customerManager = customer2.GetComponent<CustomerManager>();
             waterSkel.AnimationName = "Front_Walk";
-          
+
             //
             Sprite food = Resources.Load<Sprite>("FoodsDish/" + randomFood);
             FoodRendererSlot3.sprite = food;
@@ -380,8 +405,8 @@ public class gameController : MonoBehaviour
             statusSlotReciveFreeOfSlot1 = true;
             StartCoroutine(SetCustomerManagerStatus1(customerManager));
             customer2.SetFreeSpot(customerExit.transform);
-           
-            
+
+
             waterSkel.AnimationName = "Front_Walk";
             coinsRestaurant = dishesList[randomFood].price + coinsRestaurant;
             textCoins.text = " " + coinsRestaurant;
@@ -404,13 +429,13 @@ public class gameController : MonoBehaviour
     {
         System.Random random = new System.Random();
         var unlockedDishes = DishesList.Where(d => d.isUnLock).ToList();
-      
 
-        
+
+
 
         statusSlotReciveFreeOfSlot2 = true;
         statusSlotReciveFreeOfSlot3 = true;
-      
+
         if (statusSlotFreeOfSlot1 && statusSlotReciveFreeOfSlot1)
         {
             randomFood = random.Next(unlockedDishes.Count);
@@ -429,12 +454,12 @@ public class gameController : MonoBehaviour
             //
             newWaiter.SetFreeSpot1(targetPositionKitchen.transform);
             yield return new WaitForSeconds(2f);
-        
+
             yield return new WaitForSeconds(1f);
             enablePopupSlot1.SetActive(true);
             enablePopupKitchen.SetActive(true);
             waterSkel.AnimationName = "Front_Idle";
-            Debug.Log("adsda "+ dishesList[randomFood].processFood); 
+            Debug.Log("adsda " + dishesList[randomFood].processFood);
             yield return new WaitForSeconds(dishesList[randomFood].processFood);
             enablePopupKitchen.SetActive(false);
 
