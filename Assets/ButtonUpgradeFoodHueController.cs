@@ -52,7 +52,8 @@ public class ButtonUpgradeFoodHueController : MonoBehaviour
         int idFood = int.Parse(gameObject.name.Replace("UpBtn", ""));
 
 
-        if (!gameControllerHue.instance.DishesListHue[idFood].isUnLock && gameController.instance.coinsRestaurant > 200)
+        if (!gameControllerHue.instance.DishesListHue[idFood].isUnLock && gameControllerHue.instance.coinsRestaurant > 200)
+
         {
 
             gameControllerHue.instance.DishesListHue[idFood].isUnLock = true;
